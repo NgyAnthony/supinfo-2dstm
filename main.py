@@ -2,6 +2,7 @@ import os
 import webbrowser
 import pandas as pd
 import seaborn as sns
+from pandas import to_datetime
 from pandas import option_context
 from numpy import count_nonzero
 import warnings
@@ -101,16 +102,48 @@ class Analyzer:
         print("--- SHOW COUNT OF NAN IN " + column_name + " ---")
         print(count_nan)
 
-    def replace_nan_by_value_in_col(self, column_name, value):
+    def replace_nan_by_value_in_col(self, show_logs, column_name, value):
         print("--- REPLACING NAN IN " + column_name + " BY " + value + " ---")
 
         # Supressing .loc error, it still works.
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             self.df[[column_name]] = self.df[[column_name]].fillna(value)
-        # print(self.df[column_name])
+
+        if show_logs:
+            print(self.df[column_name])
+
+    def convert_string_col_to_datetime_col(self, show_logs, column_name):
+        print("--- CONVERTING COLUMN " + column_name + " TO DATE TYPE ---")
+        # Supressing .loc error, it still works.
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            self.df[column_name] = to_datetime(self.df[column_name], format='%Y/%m/%d')
+
+        if show_logs:
+            print(self.df[column_name])
+
+    def split_date_into_new_columns(self):
+        print("--- SPLITING DATE COL INTO YEAR AND MONTH COLS ---")
+
+        # Supressing .loc error, it still works.
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            self.df['Year'] = self.df['date'].dt.year
+            self.df['Month'] = self.df['date'].dt.month
+
+        print("--- SHOW YEAR COL ---")
+        print(self.df['Year'])
+        print("--- SHOW MONTH COL ---")
+        print(self.df['Month'])
+
+    def output_weather_filtered_csv(self):
+        self.df.to_csv('data/weather_filtered.csv')
 
 def start_analysis():
+    # Showing detailed logs of some questions
+    show_logs = False
+    # Creater our analyzer object
     analyzer = Analyzer(df)
     # Question 4.1
     analyzer.select_df_attributes()
@@ -131,14 +164,16 @@ def start_analysis():
     # Question 5.5
     analyzer.count_nan_in_col("Events")
     # Question 5.6
-    analyzer.replace_nan_by_value_in_col("Events", "NoEvent")
+    analyzer.replace_nan_by_value_in_col(show_logs, "Events", "NoEvent")
     targets = ["MeanTemp", "MinTemp", "MaxTemp", "MeanHum", "MaxHum", "MinHum", "MeanDew", "MinDew", "Dew"]
     # Replacing NAN by NoValue since we don't have a lot of missing values.
     for col in targets:
-        analyzer.replace_nan_by_value_in_col(col, "NoValue")
+        analyzer.replace_nan_by_value_in_col(show_logs, col, "NoValue")
     # Question 6.1
-    
-
+    analyzer.convert_string_col_to_datetime_col(show_logs, "date")
+    # Question 6.2, 6.3
+    analyzer.split_date_into_new_columns()
+    analyzer.output_weather_filtered_csv()
 
 if __name__ == '__main__':
     # Question 2.1
