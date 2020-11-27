@@ -81,7 +81,7 @@ class Analyzer:
         fig.savefig("data/graphs/" + column_name + "_boxplot.png")
 
     def flush_incorrect_numerical(self, column_name, flush_limit):
-        # Getting a warning even though I'm using .loc, welp.
+        # Supressing .loc error, it still works.
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             self.df.loc[self.df[column_name] > flush_limit, column_name] = None
@@ -102,13 +102,13 @@ class Analyzer:
         print(count_nan)
 
     def replace_nan_by_value_in_col(self, column_name, value):
-        # This spits out a .loc error but it works.
-        # Couldn't make it work with a .loc, needs to be fixed
         print("--- REPLACING NAN IN " + column_name + " BY " + value + " ---")
+
+        # Supressing .loc error, it still works.
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             self.df[[column_name]] = self.df[[column_name]].fillna(value)
-        print(self.df[column_name])
+        # print(self.df[column_name])
 
 def start_analysis():
     analyzer = Analyzer(df)
@@ -132,8 +132,12 @@ def start_analysis():
     analyzer.count_nan_in_col("Events")
     # Question 5.6
     analyzer.replace_nan_by_value_in_col("Events", "NoEvent")
-    # Need to choose a strategy to fill missing data on Dew/Temp/CloudCover
+    targets = ["MeanTemp", "MinTemp", "MaxTemp", "MeanHum", "MaxHum", "MinHum", "MeanDew", "MinDew", "Dew"]
+    # Replacing NAN by NoValue since we don't have a lot of missing values.
+    for col in targets:
+        analyzer.replace_nan_by_value_in_col(col, "NoValue")
     # Question 6.1
+    
 
 
 if __name__ == '__main__':
