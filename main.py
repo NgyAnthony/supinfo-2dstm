@@ -173,6 +173,7 @@ def start_analysis():
     analyzer.convert_string_col_to_datetime_col(show_logs, "date")
     # Question 6.2, 6.3
     analyzer.split_date_into_new_columns()
+    # Question 6.4
     analyzer.output_weather_filtered_csv()
 
 if __name__ == '__main__':
