@@ -1,11 +1,10 @@
 import os
 import webbrowser
-import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import numpy as np
 from pandas import option_context
 from numpy import count_nonzero
+import warnings
 
 # Read the dataset into a data table using Pandas
 
@@ -83,7 +82,9 @@ class Analyzer:
 
     def flush_incorrect_numerical(self, column_name, flush_limit):
         # Getting a warning even though I'm using .loc, welp.
-        self.df.loc[self.df[column_name] > flush_limit, column_name] = None
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            self.df.loc[self.df[column_name] > flush_limit, column_name] = None
 
     def count_rows_with_nan(self):
         count = count_nonzero(self.df.isnull().values)
@@ -104,8 +105,10 @@ class Analyzer:
         # This spits out a .loc error but it works.
         # Couldn't make it work with a .loc, needs to be fixed
         print("--- REPLACING NAN IN " + column_name + " BY " + value + " ---")
-        self.df[column_name] = self.df[column_name].fillna(value)
-
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            self.df[[column_name]] = self.df[[column_name]].fillna(value)
+        print(self.df[column_name])
 
 def start_analysis():
     analyzer = Analyzer(df)
