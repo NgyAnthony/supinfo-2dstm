@@ -138,6 +138,7 @@ class Analyzer:
         print(self.df['Month'])
 
     def output_weather_filtered_csv(self):
+        print("--- OUTPUTTING FILTERED CSV ---")
         self.df.to_csv('data/weather_filtered.csv')
 
 def start_analysis():
