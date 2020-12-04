@@ -179,15 +179,15 @@ def start_analysis():
 
 if __name__ == '__main__':
     # Question 2.1
-    # create_df_view()
+    create_df_view()
     # Question 2.2
-    # show_df_view()
+    show_df_view()
     # Question 3.1
-    # get_df_head_numerical()
+    get_df_head_numerical()
     # Question 3.2
-    # get_df_head_category()
+    get_df_head_category()
     # Question 3.3
-    # get_df_list_date()
+    get_df_list_date()
     # Question 3.4
-    # get_df_null_values()
+    get_df_null_values()
     start_analysis()
